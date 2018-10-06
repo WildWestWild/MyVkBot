@@ -33,7 +33,6 @@
             this.textBoxNumber = new System.Windows.Forms.TextBox();
             this.textBoxPassword = new System.Windows.Forms.TextBox();
             this.buttonEntrance = new System.Windows.Forms.Button();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // labelNumber
@@ -70,37 +69,26 @@
             this.textBoxPassword.Name = "textBoxPassword";
             this.textBoxPassword.Size = new System.Drawing.Size(302, 22);
             this.textBoxPassword.TabIndex = 3;
-            this.textBoxPassword.Text = "vydy8900";
+            this.textBoxPassword.Text = "M14111997";
             this.textBoxPassword.UseSystemPasswordChar = true;
+            this.textBoxPassword.TextChanged += new System.EventHandler(this.textBoxPassword_TextChanged);
             // 
             // buttonEntrance
             // 
             this.buttonEntrance.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.792F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.buttonEntrance.Location = new System.Drawing.Point(63, 300);
             this.buttonEntrance.Name = "buttonEntrance";
-            this.buttonEntrance.Size = new System.Drawing.Size(90, 37);
+            this.buttonEntrance.Size = new System.Drawing.Size(302, 37);
             this.buttonEntrance.TabIndex = 4;
-            this.buttonEntrance.Text = "Войти";
+            this.buttonEntrance.Text = "Добавить страницу ";
             this.buttonEntrance.UseVisualStyleBackColor = true;
             this.buttonEntrance.Click += new System.EventHandler(this.buttonEntrance_Click);
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.792F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.checkBox1.Location = new System.Drawing.Point(180, 300);
-            this.checkBox1.MaximumSize = new System.Drawing.Size(200, 200);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(200, 45);
-            this.checkBox1.TabIndex = 5;
-            this.checkBox1.Text = "Запомнить данные";
-            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // FormEntrance
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(437, 364);
-            this.Controls.Add(this.checkBox1);
+            this.ClientSize = new System.Drawing.Size(407, 364);
             this.Controls.Add(this.buttonEntrance);
             this.Controls.Add(this.textBoxPassword);
             this.Controls.Add(this.textBoxNumber);
@@ -121,6 +109,5 @@
         private System.Windows.Forms.TextBox textBoxNumber;
         private System.Windows.Forms.TextBox textBoxPassword;
         private System.Windows.Forms.Button buttonEntrance;
-        private System.Windows.Forms.CheckBox checkBox1;
     }
 }

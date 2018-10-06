@@ -37,6 +37,7 @@
             this.ClientSize = new System.Drawing.Size(353, 450);
             this.Name = "FormFriends";
             this.Text = "FormFriends";
+            this.Load += new System.EventHandler(this.FormFriends_Load);
             this.ResumeLayout(false);
 
         }

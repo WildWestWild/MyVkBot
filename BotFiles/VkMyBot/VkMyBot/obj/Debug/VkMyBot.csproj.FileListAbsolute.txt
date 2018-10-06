@@ -59,7 +59,6 @@ C:\GitBot\BotFiles\VkMyBot\VkMyBot\bin\Debug\Microsoft.Extensions.DependencyInje
 C:\GitBot\BotFiles\VkMyBot\VkMyBot\bin\Debug\Newtonsoft.Json.xml
 C:\GitBot\BotFiles\VkMyBot\VkMyBot\bin\Debug\NLog.xml
 C:\GitBot\BotFiles\VkMyBot\VkMyBot\bin\Debug\VkNet.xml
-C:\GitBot\BotFiles\VkMyBot\VkMyBot\obj\Debug\VkMyBot.csprojAssemblyReference.cache
 C:\GitBot\BotFiles\VkMyBot\VkMyBot\obj\Debug\VkMyBot.Form1.resources
 C:\GitBot\BotFiles\VkMyBot\VkMyBot\obj\Debug\VkMyBot.FormEntrance.resources
 C:\GitBot\BotFiles\VkMyBot\VkMyBot\obj\Debug\VkMyBot.FormFriends.resources
@@ -70,3 +69,4 @@ C:\GitBot\BotFiles\VkMyBot\VkMyBot\obj\Debug\VkMyBot.csproj.CoreCompileInputs.ca
 C:\GitBot\BotFiles\VkMyBot\VkMyBot\obj\Debug\VkMyBot.csproj.CopyComplete
 C:\GitBot\BotFiles\VkMyBot\VkMyBot\obj\Debug\VkMyBot.exe
 C:\GitBot\BotFiles\VkMyBot\VkMyBot\obj\Debug\VkMyBot.pdb
+C:\GitBot\BotFiles\VkMyBot\VkMyBot\obj\Debug\VkMyBot.csprojAssemblyReference.cache

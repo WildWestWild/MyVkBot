@@ -14,11 +14,13 @@ using VkNet.Model;
 
 namespace VkMyBot
 {
+
+   
     public partial class FormEntrance : Form
     {
-        private string numberOfMobile;
-        private string yourPassword;
-        private ulong appID = 6661577;
+        public string numberOfMobile;
+        public string yourPassword;
+        public FormMenu Menu;
         VkApi vkApi = new VkApi();
         public FormEntrance()
         {
@@ -27,9 +29,11 @@ namespace VkMyBot
 
         private void FormEntrance_Load(object sender, EventArgs e)
         {
+            
 
         }
-        public bool Authorize_check(string numberOfMobile, string yourPassword, ulong appID)
+
+        public bool Authorize_check(string numberOfMobile, string yourPassword)
         {
             try
             {
@@ -39,7 +43,7 @@ namespace VkMyBot
                     Login = numberOfMobile,
                     Password = yourPassword,
                     Settings = settings,
-                    ApplicationId = appID
+                    ApplicationId = 6661577
                 });
                 return true;
             }
@@ -54,12 +58,16 @@ namespace VkMyBot
         {
             numberOfMobile = textBoxNumber.Text;
             yourPassword = textBoxPassword.Text;
-            if (Authorize_check(numberOfMobile, yourPassword, appID))
+            if (Authorize_check(numberOfMobile, yourPassword))
             {
                 this.Hide();
-                FormMenu formMenu = new FormMenu();
-                formMenu.ShowDialog();
+                Menu.GetAccArray(numberOfMobile, yourPassword);
             }
+        }
+
+        private void textBoxPassword_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

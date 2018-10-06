@@ -16,7 +16,10 @@ namespace VkMyBot
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormEntrance());
+            //Application.Run(new Form1());
+            FormMenu Menu = new FormMenu();
+            Menu.ShowDialog();
+            
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VkMyBot.Properties;
@@ -17,6 +18,11 @@ namespace VkMyBot
 {
     public partial class Form1 : Form
     {
+      
+        public List<FormMenu.Account> listOfAccounts = new List<FormMenu.Account>();
+        //private string numberOfMobile = "89165751915";
+        //private string yourPassword = "M14111997";
+        public FormMenu Menu;
         VkApi vkApi = new VkApi();
         private int maxMess;// Счётчик отосланных сообщений
 
@@ -26,35 +32,44 @@ namespace VkMyBot
             public string name;
         }
 
-        private int MaxMess
+        public int nextId = 0;// Счётчик следующего id из users
+
+        //public bool Reload { get; private set; }
+        public bool reload = false;//Переменная отвечающая за смену id в users
+        public int saveCount = 0; //Сохраняем длину listOfFriends,чтобы отслеживать, изменяется он или нет
+        public bool Authorize_check(string numberOfMobile, string yourPassword)
         {
-            get
+            try
             {
-                return maxMess;
+                VkNet.Enums.Filters.Settings settings = VkNet.Enums.Filters.Settings.All;
+                vkApi.Authorize(new ApiAuthParams
+                {
+                    Login = numberOfMobile,
+                    Password = yourPassword,
+                    Settings = settings,
+                    ApplicationId = 6661577
+                });
+                return true;
             }
-            set
+            catch (Exception)
             {
-                if (MaxMess <= 20)
-                {
-                    maxMess = value;
-                }
-                else
-                {
-                    MessageBox.Show("Больше сообщений отослать невозможно");
-                }
+                MessageBox.Show("Ошибка авторизации! Возможно вы ошиблись в логине или пароле!");
+                return false;
             }
         }
-        public Form1()
+
+        public Form1(List<FormMenu.Account> listOfAccountsMenu)
         {
+            listOfAccounts = listOfAccountsMenu;
             InitializeComponent();
-
         }
 
-        public int GetSendMessage(List<Id_Name> listOfFriendsID)//Расслыка сообщений по списку
+        public void GetSendMessage(List<Id_Name> listOfFriendsID)//Расслыка сообщений по списку
         {
-            for (int i = 0; i < listOfFriendsID.Count(); i++)
+            Id_Name structr = new Id_Name();
+            for (int i = 0; i < 20; i++)//Отослать 20 сообщений
             {
-                Id_Name structr = new Id_Name();
+                Thread.Sleep(1000);
                 structr = listOfFriendsID[i];
                 structr.name += textBoxGetMess.Text;
                 var send = vkApi.Messages.Send(new MessagesSendParams
@@ -62,64 +77,102 @@ namespace VkMyBot
                     UserId = structr.id,
                     Message = structr.name
                 });
-                MaxMess++;
             }
-            return MaxMess;
         }
         
         public List<Id_Name> GetFriends(ref long id)
         {
-            var users = vkApi.Friends.Get(new VkNet.Model.RequestParams.FriendsGetParams
-            {
-                UserId = id,
-                Fields = ProfileFields.Online | ProfileFields.CanWritePrivateMessage | ProfileFields.City
-            });
-            
-            foreach (var friends in users)
-            {
-                if (friends.Online == true && friends.CanWritePrivateMessage == true && friends.City.Title == "Москва")
-                {
-                    
-                    listFriends.Items.Add(friends.FirstName + " " + friends.LastName + " ");
-                }
-            }
-
+           
             List<Id_Name> listOfFriendsID = new List<Id_Name>();//Сформировать список Id-друзей заданного Id
-            foreach (var friends in users)
+            try
             {
-                if (friends.Online == true && friends.CanWritePrivateMessage == true && friends.City.Title == "Москва")
+                var users = vkApi.Friends.Get(new VkNet.Model.RequestParams.FriendsGetParams
                 {
-                    Id_Name structr = new Id_Name();//Создадим структуру и поместим туда Id и Имя
-                    structr.id = friends.Id;
-                    structr.name = friends.FirstName;
-                    listOfFriendsID.Add(structr);//Запишем структуру в список
-                }
-            }
-            id = listOfFriendsID[0].id;
-            return listOfFriendsID;//Возвращаем список структур
+                    UserId = id,
+                    Fields = ProfileFields.Online | ProfileFields.CanWritePrivateMessage | ProfileFields.City | ProfileFields.BirthDate
+                });
 
-            //GetSendMessage(listOfFriendsID);
+                foreach (var friends in users)
+                {
+                    if (friends.City != null)
+                    {
+                        if (friends.Online == true && friends.CanWritePrivateMessage == true && friends.City.Title == "Москва")
+                        {
+                            listFriends.Items.Add(friends.FirstName + " " + friends.LastName + " ");
+                        }
+                    }
+                }
+                var date1995 = new DateTime(1995, 10, 5);
+                var date2000 = new DateTime(2000, 10, 5);
+                foreach (var friends in users)
+                {
+                    if (friends.City != null && friends.BirthDate != null)
+                    {
+
+                        if (DateTime.Parse(friends.BirthDate) > date1995 && DateTime.Parse(friends.BirthDate) < date2000)
+                        {
+                            if (friends.Online == true && friends.CanWritePrivateMessage == true && friends.City.Title == "Москва")
+                            {
+                                Id_Name structr = new Id_Name();//Создадим структуру и поместим туда Id и Имя
+                                structr.id = friends.Id;
+                                structr.name = friends.FirstName;
+                                listOfFriendsID.Add(structr);//Запишем структуру в список
+                            }
+                        }
+                    }
+                }
+                if (listOfFriendsID.Count == 0 || reload == true)
+                {
+                    nextId++;//Присваеваем следующее id из users
+                    id = users[nextId].Id;
+                }
+                else
+                {
+                    id = listOfFriendsID[0].id;
+                }
+                return listOfFriendsID;//Возвращаем список структур
+            }
+            catch (Exception)
+            {
+                reload = true;
+                nextId++;
+                var findId = vkApi.Friends.Get(new VkNet.Model.RequestParams.FriendsGetParams
+                {
+                    UserId = Convert.ToInt64(textBoxId.Text)
+                });
+                id = findId[nextId].Id;
+                return listOfFriendsID;
+            }
         }
         public List<Id_Name> DeleteListElRepeat(List<Id_Name> LLF)
         {
             int i = 0;
-
-            while (i != LLF.Count)
-            {
-                Id_Name Compare = new Id_Name();
-                Compare = LLF[i];//Присваиваем перменной значение LLF
-                LLF.RemoveAll(Pred => Compare.id == LLF[i].id);//Удаляем все элементы, которые удовлетворяют условию предиката
-                LLF.Add(Compare);//Добавляем в список удалённый элемент, чтобы он находился там в единственном количестве
+            Id_Name Compare = new Id_Name();
+            while (i != LLF.Count)//Прогоняем
+              {
+                Compare = LLF[LLF.Count - 1];
+                LLF.RemoveAll(Pred => Pred.id == LLF[LLF.Count -1].id);//Удаляем все элементы, которые удовлетворяют условию предиката
+                LLF.Insert(0, Compare);//Вставляем удалённый элемент
                 i++;
+               }
+            if (LLF.Count == saveCount)
+            {
+                reload = true;
+            }
+            else
+            {
+                reload = false;
             }
             return LLF;
         }
         public List<Id_Name> GetListOfListsOfFriends_LLF(List<Id_Name> LLF, List<Id_Name> listOfFriends)//Создание общего списка из частных и удаление похожих элементов
         {
-
-            LLF.InsertRange(0, listOfFriends);//Вставляем в общий список часть
-            DeleteListElRepeat(LLF);
-            //id = LLF[0].id;
+            saveCount = LLF.Count;
+            if (listOfFriends.Count > 0)
+            {
+                LLF.InsertRange(0, listOfFriends);//Вставляем в общий список часть
+                DeleteListElRepeat(LLF);//Удаляет повторяющиеся id
+            }
             return LLF;
         }
         internal void ShowModel()
@@ -129,35 +182,24 @@ namespace VkMyBot
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            long FirstId = Convert.ToInt32(textBoxId.Text);
+                
+        }
+        private void recr_button_Click(object sender, EventArgs e)
+        {
+            Authorize_check(listOfAccounts[0].numberOfMobile, listOfAccounts[0].yourPassword);//Проходим авторизацию
             List<Id_Name> LLF = new List<Id_Name>();
-            do
+            long FirstId = Convert.ToInt32(textBoxId.Text);
+            while (LLF.Count < listOfAccounts.Count*20)
             {
                 GetListOfListsOfFriends_LLF(LLF, GetFriends(ref FirstId));//ref должен при каждом обращении к GetFriends давать новый id
-                MaxMess += GetSendMessage(LLF);
-            } while (maxMess <= 20);
-                
-
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
+            }
+            for (int i = 0; i < listOfAccounts.Count; i++)
+            {
+                nextId = 0;
+                Authorize_check(listOfAccounts[i].numberOfMobile, listOfAccounts[i].yourPassword);//Проходим авторизацию на каждой странице
+                //GetSendMessage(LLF);//Послать сообщение первым 20 из списка
+                LLF.RemoveRange(0, 20);//Удалить первых 20 человек из списка
+            }
         }
     }
 }
